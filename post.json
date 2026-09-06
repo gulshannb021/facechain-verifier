@@ -1,0 +1,12 @@
+{
+  "canonical_data": null,
+  "extraction_metadata": {
+    "discovered_at": "2026-09-06T10:25:33Z",
+    "extracted_by": "PersonB_PostDiscoveryEngine/2.0",
+    "schema_version": "1.0",
+    "search_provider": "none",
+    "input_image": "test_face.jpg",
+    "status": "no_social_media_post_found"
+  },
+  "all_matched_posts": []
+}

@@ -1,0 +1,21 @@
+{
+  "posts": [
+    {
+      "post_id": "45129085",
+      "platform": "hackernews",
+      "author": "_nvs",
+      "author_id": "_nvs",
+      "content": "Stripe Launches L1 Blockchain: Tempo",
+      "timestamp": "2025-09-04T16:32:24Z",
+      "url": "https://tempo.xyz",
+      "media_urls": [],
+      "engagement": {
+        "likes": 808,
+        "comments": 120,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-04T17:22:04Z"
+    }
+  ]
+}
