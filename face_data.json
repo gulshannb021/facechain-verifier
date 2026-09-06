@@ -1,0 +1,11 @@
+{
+  "face_detected": true,
+  "source_image": "test.jpeg",
+  "bounding_box": {
+    "top": 44,
+    "right": 232,
+    "bottom": 112,
+    "left": 164
+  },
+  "cropped_face_path": "face.jpg"
+}
