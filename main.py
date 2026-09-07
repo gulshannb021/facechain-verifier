@@ -125,7 +125,17 @@ if not POST_JSON.exists():
 with open(POST_JSON, "r", encoding="utf-8") as f:
     post_data = json.load(f)
 
-canonical_data = post_data.get("canonical_data", {})
+canonical_data = post_data.get("canonical_data") or {}
+
+if not canonical_data:
+    print("✗ No matching social media post found")
+    print("\n========================================")
+    print("       ❌ PIPELINE STOPPED")
+    print("========================================")
+    print("\nReason: No usable post data was returned.")
+    print("Blockchain verification requires a valid post.")
+    sys.exit(1)
+
 
 platform = (
     canonical_data.get("platform")

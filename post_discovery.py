@@ -17,6 +17,8 @@ import urllib.request
 from dotenv import load_dotenv
 import ssl
 import certifi
+import cv2
+import numpy as np
 
 load_dotenv("person_c_blockchain/contracts/contracts/.env")
 
@@ -810,6 +812,306 @@ def load_image_bytes(image_input: str) -> Tuple[bytes, str]:
 
     return data, mime_type
 
+# ------------------------------------------------------------------------------
+# Face Match Verification
+# ------------------------------------------------------------------------------
+
+FACE_DETECTION_MODEL = os.path.join(
+    os.path.dirname(__file__),
+    "models",
+    "face_detection.prototxt"
+)
+
+FACE_DETECTION_WEIGHTS = os.path.join(
+    os.path.dirname(__file__),
+    "models",
+    "face_detection.caffemodel"
+)
+
+FACE_RECOGNITION_MODEL = os.path.join(
+    os.path.dirname(__file__),
+    "models",
+    "face_recognition_sface_2021dec.onnx"
+)
+
+FACE_MATCH_THRESHOLD = float(
+    os.environ.get("FACE_MATCH_THRESHOLD", "0.45")
+)
+
+
+class FaceMatchVerifier:
+    """
+    Verifies whether a candidate web image contains the same face
+    as the input face image using OpenCV DNN + SFace.
+    """
+
+    def __init__(self):
+        self.detector = cv2.dnn.readNetFromCaffe(
+            FACE_DETECTION_MODEL,
+            FACE_DETECTION_WEIGHTS
+        )
+
+        self.recognizer = cv2.FaceRecognizerSF_create(
+            FACE_RECOGNITION_MODEL,
+            ""
+        )
+
+    def _decode_image(self, image_bytes: bytes) -> Optional[np.ndarray]:
+        try:
+            array = np.frombuffer(image_bytes, dtype=np.uint8)
+            image = cv2.imdecode(array, cv2.IMREAD_COLOR)
+
+            if image is None:
+                return None
+
+            return image
+
+        except Exception as err:
+            logger.warning(f"Could not decode candidate image: {err}")
+            return None
+
+    def _detect_faces(
+        self,
+        image: np.ndarray,
+        confidence_threshold: float = 0.50
+    ) -> List[List[int]]:
+
+        height, width = image.shape[:2]
+
+        blob = cv2.dnn.blobFromImage(
+            image,
+            scalefactor=1.0,
+            size=(300, 300),
+            mean=(104.0, 177.0, 123.0),
+            swapRB=False,
+            crop=False
+        )
+
+        self.detector.setInput(blob)
+        detections = self.detector.forward()
+
+        faces = []
+
+        for i in range(detections.shape[2]):
+            confidence = float(detections[0, 0, i, 2])
+
+            if confidence < confidence_threshold:
+                continue
+
+            box = detections[0, 0, i, 3:7] * np.array(
+                [width, height, width, height]
+            )
+
+            left, top, right, bottom = box.astype(int)
+
+            left = max(0, left)
+            top = max(0, top)
+            right = min(width - 1, right)
+            bottom = min(height - 1, bottom)
+
+            face_width = right - left
+            face_height = bottom - top
+
+            if face_width <= 10 or face_height <= 10:
+                continue
+
+            faces.append([
+                left,
+                top,
+                face_width,
+                face_height
+            ])
+
+        return faces
+
+    def _feature_from_face(
+        self,
+        image: np.ndarray,
+        face_box: List[int]
+    ) -> Optional[np.ndarray]:
+
+        try:
+            face_box_np = np.array(
+                face_box,
+                dtype=np.int32
+            )
+
+            aligned_face = self.recognizer.alignCrop(
+                image,
+                face_box_np
+            )
+
+            feature = self.recognizer.feature(
+                aligned_face
+            )
+
+            return feature
+
+        except Exception as err:
+            logger.warning(
+                f"Could not generate SFace feature: {err}"
+            )
+            return None
+
+    def _get_input_feature(
+        self,
+        image_input: str
+    ) -> Optional[np.ndarray]:
+
+        try:
+            image_bytes, _ = load_image_bytes(image_input)
+            image = self._decode_image(image_bytes)
+
+            if image is None:
+                return None
+
+            faces = self._detect_faces(image)
+
+            if not faces:
+                logger.warning(
+                    "No face detected in Person A input image."
+                )
+                return None
+
+            # Use the largest detected face.
+            faces.sort(
+                key=lambda box: box[2] * box[3],
+                reverse=True
+            )
+
+            return self._feature_from_face(
+                image,
+                faces[0]
+            )
+
+        except Exception as err:
+            logger.warning(
+                f"Could not process input face '{image_input}': {err}"
+            )
+            return None
+
+    def compare_candidate(
+        self,
+        input_feature: np.ndarray,
+        candidate_url: str
+    ) -> Tuple[bool, float, int]:
+
+        try:
+            candidate_bytes, _ = load_image_bytes(
+                candidate_url
+            )
+
+            candidate_image = self._decode_image(
+                candidate_bytes
+            )
+
+            if candidate_image is None:
+                return False, 0.0, 0
+
+            faces = self._detect_faces(
+                candidate_image
+            )
+
+            if not faces:
+                logger.info(
+                    "Candidate image contains no detectable face."
+                )
+                return False, 0.0, 0
+
+            best_similarity = -1.0
+
+            for face_box in faces:
+                feature = self._feature_from_face(
+                    candidate_image,
+                    face_box
+                )
+
+                if feature is None:
+                    continue
+
+                similarity = float(
+                    self.recognizer.match(
+                        input_feature,
+                        feature,
+                        cv2.FaceRecognizerSF_FR_COSINE
+                    )
+                )
+
+                best_similarity = max(
+                    best_similarity,
+                    similarity
+                )
+
+            if best_similarity < 0:
+                return False, 0.0, len(faces)
+
+            matched = (
+                best_similarity >= FACE_MATCH_THRESHOLD
+            )
+
+            return (
+                matched,
+                best_similarity,
+                len(faces)
+            )
+
+        except Exception as err:
+            logger.info(
+                f"Candidate image verification failed: {err}"
+            )
+            return False, 0.0, 0
+
+    def verify(
+        self,
+        input_image: str,
+        candidate_image_urls: List[str]
+    ) -> Tuple[bool, float, Optional[str]]:
+
+        input_feature = self._get_input_feature(
+            input_image
+        )
+
+        if input_feature is None:
+            return False, 0.0, None
+
+        best_similarity = -1.0
+        best_url = None
+
+        for candidate_url in candidate_image_urls:
+
+            if not candidate_url:
+                continue
+
+            matched, similarity, face_count = (
+                self.compare_candidate(
+                    input_feature,
+                    candidate_url
+                )
+            )
+
+            logger.info(
+                f"Face comparison: "
+                f"similarity={similarity:.4f}, "
+                f"faces={face_count}, "
+                f"matched={matched}"
+            )
+
+            if similarity > best_similarity:
+                best_similarity = similarity
+                best_url = candidate_url
+
+            if matched:
+                return True, similarity, candidate_url
+
+        if best_similarity < 0:
+            best_similarity = 0.0
+
+        return (
+            False,
+            best_similarity,
+            best_url
+        )
+
 
 class BaseReverseImageProvider:
     """Interface for Reverse Image Search API providers."""
@@ -996,6 +1298,7 @@ class SerpApiReverseFetcher(BaseReverseImageProvider):
         results = []
 
         for match in data.get("visual_matches", []):
+
             link = match.get("link")
 
             if link:
@@ -1003,9 +1306,16 @@ class SerpApiReverseFetcher(BaseReverseImageProvider):
                     "url": link,
                     "title": match.get("title", ""),
                     "snippet": match.get("source", ""),
+                    "image_url": (
+                        match.get("thumbnail")
+                        or match.get("image")
+                        or match.get("original")
+                        or match.get("image_url")
+                    )
                 })
 
         for match in data.get("exact_matches", []):
+
             link = match.get("link")
 
             if link:
@@ -1013,6 +1323,12 @@ class SerpApiReverseFetcher(BaseReverseImageProvider):
                     "url": link,
                     "title": match.get("title", ""),
                     "snippet": match.get("source", ""),
+                    "image_url": (
+                        match.get("thumbnail")
+                        or match.get("image")
+                        or match.get("original")
+                        or match.get("image_url")
+                    )
                 })
 
         logger.info(
@@ -1203,43 +1519,164 @@ class ReverseImageSearchEngine:
             PublicReverseImageFetcher(),
         ]
 
-    def search_and_extract_posts(self, image_input: str) -> Tuple[List[Post], str]:
-        img_bytes, mime_type = load_image_bytes(image_input)
+    def search_and_extract_posts(
+        self,
+        image_input: str
+    ) -> Tuple[List[Post], str]:
+
+        load_image_bytes(image_input)
 
         matched_web_results: List[Dict[str, Any]] = []
         provider_used = "none"
 
+        # ------------------------------------------------------------------
+        # Stage 1: Genuine reverse image search
+        # ------------------------------------------------------------------
+
         for provider in self.providers:
+
             if not provider.is_available():
                 continue
-            logger.info(f"Executing reverse image search via provider '{provider.provider_name}' for '{image_input}'...")
+
+            logger.info(
+                f"Executing reverse image search via provider "
+                f"'{provider.provider_name}' for '{image_input}'..."
+            )
+
             try:
                 results = provider.search_image(image_input)
+
                 if results:
                     matched_web_results = results
                     provider_used = provider.provider_name
-                    logger.info(f"Provider '{provider_used}' returned {len(results)} web results.")
+
+                    logger.info(
+                        f"Provider '{provider_used}' returned "
+                        f"{len(results)} web results."
+                    )
+
                     break
+
             except Exception as err:
-                logger.warning(f"Reverse search provider '{provider.provider_name}' error: {err}")
+                logger.warning(
+                    f"Reverse search provider "
+                    f"'{provider.provider_name}' error: {err}"
+                )
+
+        # ------------------------------------------------------------------
+        # Stage 2: Face-level verification
+        # ------------------------------------------------------------------
+
+        if not matched_web_results:
+            logger.warning(
+                "Reverse image search returned no results."
+            )
+            return [], provider_used
+
+        logger.info(
+            "Starting face-level verification of reverse-search candidates..."
+        )
+
+        try:
+            face_verifier = FaceMatchVerifier()
+        except Exception as err:
+            logger.error(
+                f"Could not initialize face verification models: {err}"
+            )
+            return [], provider_used
 
         social_posts: List[Post] = []
         seen_urls = set()
 
         for item in matched_web_results:
+
             url = item.get("url") or item.get("link")
+
             if not url or url in seen_urls:
                 continue
+
             seen_urls.add(url)
 
             platform = classify_social_media_url(url)
-            if platform:
-                logger.info(f"Discovered social media match ({platform}): {url}")
-                post = extract_post_from_social_url(url)
-                if post and is_valid_post(post):
-                    if not post.content and item.get("title"):
-                        post.content = item["title"]
-                    social_posts.append(post)
+
+            if not platform:
+                continue
+
+            logger.info(
+                f"Checking social-media candidate "
+                f"({platform}): {url}"
+            )
+
+            # Extract post metadata
+            post = extract_post_from_social_url(url)
+
+            if not post or not is_valid_post(post):
+                logger.info(
+                    f"Rejected candidate because post metadata "
+                    f"could not be extracted: {url}"
+                )
+                continue
+
+            if not post.content and item.get("title"):
+                post.content = item["title"]
+
+            # Get candidate images
+            candidate_images = []
+
+            # First use the image URL returned directly by
+            # Google Lens / SerpApi.
+            lens_image = item.get("image_url")
+
+            if lens_image:
+                candidate_images.append(
+                    str(lens_image).strip()
+                )
+
+            # Also use images extracted from the actual social post
+            # when the platform allows access.
+            if isinstance(post.media_urls, list):
+                for media_url in post.media_urls:
+                    if media_url:
+                        media_url = str(media_url).strip()
+
+                        if media_url not in candidate_images:
+                            candidate_images.append(media_url)
+
+            if not candidate_images:
+                logger.info(
+                    f"Rejected candidate because no candidate "
+                    f"image was available: {url}"
+                )
+                continue
+
+            # Actual face comparison
+            matched, similarity, matched_image = (
+                face_verifier.verify(
+                    image_input,
+                    candidate_images
+                )
+            )
+
+            if matched:
+
+                logger.info(
+                    f"VERIFIED FACE MATCH: {url} "
+                    f"(similarity={similarity:.4f})"
+                )
+
+                social_posts.append(post)
+
+            else:
+
+                logger.info(
+                    f"Rejected non-matching candidate: {url} "
+                    f"(best similarity={similarity:.4f})"
+                )
+
+        logger.info(
+            f"Face verification accepted "
+            f"{len(social_posts)} genuinely matching social-media posts."
+        )
 
         return social_posts, provider_used
 

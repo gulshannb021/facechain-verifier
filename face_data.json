@@ -1,13 +1,13 @@
 {
   "face_detected": true,
-  "source_image": "test.jpeg",
+  "source_image": "rdj.jpg",
   "bounding_box": {
-    "top": 97,
-    "right": 447,
-    "bottom": 389,
-    "left": 223
+    "top": 208,
+    "right": 710,
+    "bottom": 799,
+    "left": 305
   },
-  "detection_confidence": 0.9999880790710449,
+  "detection_confidence": 0.9998055100440979,
   "cropped_face_path": "face.jpg",
   "encoding": [
     0.041046082973480225,
