@@ -14,6 +14,15 @@ from typing import Any, Dict, List, Optional, Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
+from dotenv import load_dotenv
+import ssl
+import certifi
+
+load_dotenv("person_c_blockchain/contracts/contracts/.env")
+
+ssl._create_default_https_context = lambda: ssl.create_default_context(
+    cafile=certifi.where()
+)
 
 
 def _get_env_int(key: str, default: int) -> int:
@@ -877,7 +886,7 @@ class GoogleVisionReverseFetcher(BaseReverseImageProvider):
 
 
 class SerpApiReverseFetcher(BaseReverseImageProvider):
-    """SerpAPI Google Lens / Google Reverse Image Search API integration."""
+    """SerpAPI Google Lens integration with local image upload."""
 
     def __init__(self):
         super().__init__(provider_name="serpapi_google_lens")
@@ -890,34 +899,127 @@ class SerpApiReverseFetcher(BaseReverseImageProvider):
         if not self.api_key:
             return []
 
-        image_url = image_input
-        params = urllib.parse.urlencode({
-            "engine": "google_lens",
-            "url": image_url,
-            "api_key": self.api_key
-        })
-        url = f"https://serpapi.com/search.json?{params}"
+        if not os.path.isfile(image_input):
+            logger.error(
+                f"[serpapi_google_lens] Image file not found: {image_input}"
+            )
+            return []
 
-        req = urllib.request.Request(url, headers={"User-Agent": DEFAULT_USER_AGENT})
         try:
-            with urllib.request.urlopen(req, timeout=DEFAULT_TIMEOUT) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
+            from serpapi import GoogleSearch
+
+            # Upload local image to SerpApi Image API.
+            with open(image_input, "rb") as f:
+                image_bytes = f.read()
+
+            boundary = "----FaceChainBoundary"
+
+            filename = os.path.basename(image_input)
+            content_type = (
+                mimetypes.guess_type(image_input)[0]
+                or "image/jpeg"
+            )
+
+            body = (
+                f"--{boundary}\r\n"
+                f'Content-Disposition: form-data; name="image"; '
+                f'filename="{filename}"\r\n'
+                f"Content-Type: {content_type}\r\n\r\n"
+            ).encode("utf-8")
+
+            body += image_bytes
+            body += f"\r\n--{boundary}\r\n".encode("utf-8")
+            body += (
+                b'Content-Disposition: form-data; name="api_key"\r\n\r\n'
+            )
+            body += self.api_key.encode("utf-8")
+            body += f"\r\n--{boundary}--\r\n".encode("utf-8")
+
+            upload_req = urllib.request.Request(
+                "https://serpapi.com/image",
+                data=body,
+                headers={
+                    "Content-Type": f"multipart/form-data; boundary={boundary}",
+                    "User-Agent": DEFAULT_USER_AGENT,
+                },
+                method="POST",
+            )
+
+            with urllib.request.urlopen(
+                upload_req,
+                timeout=DEFAULT_TIMEOUT
+            ) as resp:
+                upload_data = json.loads(
+                    resp.read().decode("utf-8")
+                )
+
+            if upload_data.get("error"):
+                logger.error(
+                    f"[serpapi_google_lens] Upload error: "
+                    f"{upload_data['error']}"
+                )
+                return []
+
+            image_id = upload_data.get("image_id")
+
+            if not image_id:
+                logger.error(
+                    "[serpapi_google_lens] Upload did not return image_id"
+                )
+                return []
+
+            logger.info(
+                "[serpapi_google_lens] Image uploaded successfully"
+            )
+
+            # Search the uploaded image with Google Lens.
+            search = GoogleSearch({
+                "engine": "google_lens",
+                "image_id": image_id,
+                "api_key": self.api_key,
+            })
+
+            data = search.get_dict()
+
         except Exception as e:
-            logger.error(f"[serpapi_google_lens] API request failed: {e}")
+            logger.error(
+                f"[serpapi_google_lens] API request failed: {e}"
+            )
+            return []
+
+        if data.get("error"):
+            logger.error(
+                f"[serpapi_google_lens] API error: {data['error']}"
+            )
             return []
 
         results = []
+
         for match in data.get("visual_matches", []):
-            link = match.get("link") or match.get("source")
+            link = match.get("link")
+
             if link:
                 results.append({
                     "url": link,
                     "title": match.get("title", ""),
-                    "snippet": match.get("source", "")
+                    "snippet": match.get("source", ""),
                 })
 
-        return results
+        for match in data.get("exact_matches", []):
+            link = match.get("link")
 
+            if link:
+                results.append({
+                    "url": link,
+                    "title": match.get("title", ""),
+                    "snippet": match.get("source", ""),
+                })
+
+        logger.info(
+            f"[serpapi_google_lens] Found {len(results)} image matches"
+        )
+
+        return results
 
 class SearchApiReverseFetcher(BaseReverseImageProvider):
     """SearchApi.io Google Lens API integration."""

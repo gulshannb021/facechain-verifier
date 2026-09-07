@@ -1,12 +1,249 @@
 {
-  "canonical_data": null,
+  "canonical_data": {
+    "post_id": "inspired_from_a_similar_post_which_superhero",
+    "platform": "reddit",
+    "author": "reddit",
+    "author_id": "reddit",
+    "content": "Reddit",
+    "timestamp": null,
+    "url": "https://www.reddit.com/r/bollywood/comments/1g34ll5/inspired_from_a_similar_post_which_superhero/",
+    "media_urls": [],
+    "engagement": {
+      "likes": null,
+      "comments": null,
+      "shares": null,
+      "views": null
+    },
+    "discovered_at": "2026-09-07T06:46:15Z"
+  },
   "extraction_metadata": {
-    "discovered_at": "2026-09-06T10:25:33Z",
+    "discovered_at": "2026-09-07T06:46:30Z",
     "extracted_by": "PersonB_PostDiscoveryEngine/2.0",
     "schema_version": "1.0",
-    "search_provider": "none",
-    "input_image": "test_face.jpg",
-    "status": "no_social_media_post_found"
+    "search_provider": "serpapi_google_lens",
+    "input_image": "/Users/gulshan/Desktop/HH Goa/facechain-verifier copy/facechain-verifier/face.jpg",
+    "status": "success"
   },
-  "all_matched_posts": []
+  "all_matched_posts": [
+    {
+      "post_id": "inspired_from_a_similar_post_which_superhero",
+      "platform": "reddit",
+      "author": "reddit",
+      "author_id": "reddit",
+      "content": "Reddit",
+      "timestamp": null,
+      "url": "https://www.reddit.com/r/bollywood/comments/1g34ll5/inspired_from_a_similar_post_which_superhero/",
+      "media_urls": [],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:15Z"
+    },
+    {
+      "post_id": "DPr0bgTAHd9",
+      "platform": "instagram",
+      "author": "Instagram",
+      "author_id": "Instagram",
+      "content": "Laughing Colours | Humor | Fun (@laughingcolours) • Instagram photo",
+      "timestamp": null,
+      "url": "https://www.instagram.com/p/DPr0bgTAHd9/",
+      "media_urls": [
+        "https://scontent.cdninstagram.com/v/t39.30808-6/562379453_1207207328107403_923454101944632915_n.jpg?stp=c211.0.633.633a_dst-jpg_e35_s640x640_tt6&amp;_nc_cat=108&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=czM-Awbf8TUQ7kNvwH7oM4v&amp;_nc_oc=AdoUV8vah4HCjem9ZY0I2ZvswX285H0FzXZ0DUMgRv0q5ZAk1NT_ePMsHcNfVSzsAR8EeZvg0AQV299jM3h57O-l&amp;_nc_zt=23&amp;_nc_ht=scontent.cdninstagram.com&amp;_nc_gid=eM_vuqstAw3A-pGUkJHvXg&amp;_nc_ss=7b60f&amp;oh=00_AQLkNK7iX3OWA7cfymUOIWOo-biv11cXnf_xOmUT-1Yw6Q&amp;oe=6AA422F4"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:16Z"
+    },
+    {
+      "post_id": "watch",
+      "platform": "youtube",
+      "author": "YouTube",
+      "author_id": "YouTube",
+      "content": "Akshay Kumar Promotes 'OMG! Oh My God' At WIFT Workshop\nActor Akshay Kumar at the WIFT (Women in Film and Television Association India) workshop in India. He, along with director of his movie OMG! Oh My God, Umesh...",
+      "timestamp": null,
+      "url": "https://www.youtube.com/watch?v=KoTmF6XcwoY",
+      "media_urls": [
+        "https://i.ytimg.com/vi/KoTmF6XcwoY/hqdefault.jpg"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:18Z"
+    },
+    {
+      "post_id": "1784017365098777",
+      "platform": "facebook",
+      "author": "facebook",
+      "author_id": "facebook",
+      "content": "The Quint\nBollywood actor Akshay Kumar took to Twitter on 31 May to clarify that the news suggesting that he booked a special chartered flight for his sister and her kids is absolutely fake.",
+      "timestamp": null,
+      "url": "https://www.facebook.com/quintillion/posts/bollywood-actor-akshay-kumar-took-to-twitter-on-31-may-to-clarify-that-the-news-/1784017365098777/",
+      "media_urls": [
+        "https://external.fpat2-9.fna.fbcdn.net/emg1/v/t13/1949351509976403667?_nc_oc=AdrRksGNmltQ2bausMFmufO6IlvKzYQ8LD3xXa5iXjSjkbqdjFInxVBylHvnqHfDGB_eJV08y-c3STNhMc8dou9f&amp;url=https%3A%2F%2Fimages.assettype.com%2Fthequint%2F2020-03%2Fb4c50c64-968a-474f-9dde-8499aea58f0d%2Fakshay.jpg&amp;fb_obo=1&amp;utld=assettype.com&amp;dfr=1&amp;_nc_sid=867500&amp;_nc_ht=external.fpat2-9.fna.fbcdn.net&amp;stp=dst-jpg_p600x600_tt6&amp;ccb=18-1&amp;_nc_gid=_KL02RSm_0srg_Ex98k6DQ&amp;_nc_map=urlgen_bucketless&amp;_nc_zt=3&amp;oh=06_Q3_DAd8nXhy1a1VmeNlbKD8D7b_X0wgiymTQz3X6dXeNVTK4&amp;oe=6AA03DDD"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:19Z"
+    },
+    {
+      "post_id": "DWSxNuviIb0",
+      "platform": "instagram",
+      "author": "Instagram",
+      "author_id": "Instagram",
+      "content": "RK on Instagram: \"Actor @akshaykumar’s advice to those starting out in the film industry. #AkshayKumar in conversation with @realbollywoodhungama’s @rohitkhilnani ahead of his release #BhootBangla on April 10\"\n263 likes, 4 comments - rohitkhilnani on March 24, 2026: \"Actor @akshaykumar’s advice to those starting out in the film industry. #AkshayKumar in conversation with @realbollywoodhungama’s @rohitkhilnani ahead of his release #BhootBangla on April 10\".",
+      "timestamp": null,
+      "url": "https://www.instagram.com/reel/DWSxNuviIb0/",
+      "media_urls": [
+        "https://scontent.cdninstagram.com/v/t51.82787-15/655966709_18570875800017764_7650359626295695121_n.jpg?stp=cmp1_dst-jpg_e35_s640x640_tt6&amp;_nc_cat=101&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiQ0xJUFMuYmVzdF9pbWFnZV91cmxnZW4uQzMifQ%3D%3D&amp;_nc_ohc=B19dtXJPtQ4Q7kNvwG9h2-Y&amp;_nc_oc=AdoTktj1P3hUqHAzQuzhRDHv83nYnwL7gWe0eExbj-NYqqk8cGUB6enLWSzp5Jo5ityX4jHQ0XfBK3k8vUQJ9g4A&amp;_nc_zt=23&amp;_nc_ht=scontent.cdninstagram.com&amp;_nc_gid=0wFZIDuOCl0I94zpUDN81A&amp;_nc_ss=7b60f&amp;oh=00_AQJudcXy9uwYEDRWfNtGcIM2r3y0YNl61iERQ3lmY5ZdFg&amp;oe=6AA41694"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:21Z"
+    },
+    {
+      "post_id": "EvHzKjVE6Ww",
+      "platform": "youtube",
+      "author": "YouTube",
+      "author_id": "YouTube",
+      "content": "role of third and sixth house of astrology in success\nrole of third and sixth house of astrology in successAbout AstroBholle__________________AstroBholle is dedicated to Indian vedic astrology. All astrology and...",
+      "timestamp": null,
+      "url": "https://www.youtube.com/shorts/EvHzKjVE6Ww",
+      "media_urls": [
+        "https://i.ytimg.com/vi/EvHzKjVE6Ww/hq720_2.jpg?sqp=-oaymwEkCJYDENAFSFryq4qpAxYIARUAAAAAJQAAyEI9AICiQ3gB0AEB&amp;rs=AOn4CLDJZzBKOieRK9kA3t2fmUfEW-dcag"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:22Z"
+    },
+    {
+      "post_id": "akshay-kumar",
+      "platform": "pinterest",
+      "author": "pinterest",
+      "author_id": "pinterest",
+      "content": "100 Akshay kumar ideas | akshay kumar style, akshay kumar photoshoot, akshay kumar hairstyle",
+      "timestamp": null,
+      "url": "https://in.pinterest.com/adityaaditya18epcme007/akshay-kumar/",
+      "media_urls": [],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:24Z"
+    },
+    {
+      "post_id": "akshay_kumar_says_he_has_canadian_citizenship_for",
+      "platform": "reddit",
+      "author": "reddit",
+      "author_id": "reddit",
+      "content": "Reddit",
+      "timestamp": null,
+      "url": "https://www.reddit.com/r/india/comments/wpjioa/akshay_kumar_says_he_has_canadian_citizenship_for/",
+      "media_urls": [],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:25Z"
+    },
+    {
+      "post_id": "370024726118189",
+      "platform": "facebook",
+      "author": "facebook",
+      "author_id": "facebook",
+      "content": "FILMO MANIA\n\"Akshay Kumar's magic seems to have faded. In the past thirty months, his last eight films have failed to taste success at the box office. Even his latest release, Sarphira, couldn't make a mark....",
+      "timestamp": null,
+      "url": "https://www.facebook.com/FilmoManiafb/posts/akshay-kumars-magic-seems-to-have-faded-in-the-past-thirty-months-his-last-eight/370024726118189/",
+      "media_urls": [
+        "https://scontent.fpat2-8.fna.fbcdn.net/v/t39.30808-6/475815476_503621409425186_7256083115093718167_n.jpg?stp=dst-jpg_tt6&amp;cstp=mx545x307&amp;ctp=s545x307&amp;_nc_cat=108&amp;_nc_map=urlgen_bucketless&amp;ccb=1-7&amp;_nc_sid=b96d88&amp;_nc_ohc=Ah-HBr1_0gQQ7kNvwF6hqY1&amp;_nc_oc=AdrV0fKNOzbxikv_fQu-kBadP_1WHPWWkBrbIPf32mDv7JP6WEklfqoA8Q4tJzENIX7--UPzyfPoaLuuL9w5HESl&amp;_nc_zt=23&amp;_nc_ht=scontent.fpat2-8.fna&amp;_nc_gid=P8bf35oecTxU7ZA4zX_xRg&amp;_nc_ss=7b20f&amp;oh=00_AQIwnDnvDv22lRhSp5v_rdrKEqaAldaiNZimaMqP2sgzFg&amp;oe=6AA42D39"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:26Z"
+    },
+    {
+      "post_id": "DMH_uXUMIsd",
+      "platform": "instagram",
+      "author": "Instagram",
+      "author_id": "Instagram",
+      "content": "Khiladi Bhaiyya Akshay Kumar (@khiladibakshay) • Instagram photo",
+      "timestamp": null,
+      "url": "https://www.instagram.com/p/DMH_uXUMIsd/",
+      "media_urls": [
+        "https://scontent.cdninstagram.com/v/t51.82787-15/625032891_18100359427853157_6807390106686637329_n.jpg?stp=c288.0.864.864a_dst-jpg_e35_s640x640_tt6&amp;_nc_cat=107&amp;ccb=7-5&amp;_nc_sid=18de74&amp;efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&amp;_nc_ohc=KC20hMXHJWYQ7kNvwGlB0pF&amp;_nc_oc=Adr_IMHyMOv-gev9wA5l1vZ92n33IWPAPP81krqGAAzfnc7c5HWq8a2usJdr3YczLsdHAntTpZr4bMVfU1TVVjTa&amp;_nc_zt=23&amp;_nc_ht=scontent.cdninstagram.com&amp;_nc_gid=Z5DiC3TQLHFT0bs5dMhM2Q&amp;_nc_ss=7b60f&amp;oh=00_AQKbrJVDySiXstWxOyLp6GtFk6nODEMFyToj3gJ1ZwKtKg&amp;oe=6AA42795"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:27Z"
+    },
+    {
+      "post_id": "2092699743205970207",
+      "platform": "twitter",
+      "author": "X (formerly Twitter)",
+      "author_id": "X (formerly Twitter)",
+      "content": "FAREEDA KIRI🌹🌹🌹🌹 (@Faridatu001) on X\nBollywood actors with their religious, Hi @grok which one is Sikh",
+      "timestamp": "2026-08-26T19:44:33Z",
+      "url": "https://x.com/Faridatu001/status/2092699743205970207",
+      "media_urls": [
+        "https://pbs.twimg.com/amplify_video_thumb/2092699690059853826/img/oVK2tlaEyCFPFmKQ.jpg"
+      ],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:30Z"
+    },
+    {
+      "post_id": "122178983210803659",
+      "platform": "facebook",
+      "author": "facebook",
+      "author_id": null,
+      "content": "Post discovered on facebook (https://www.facebook.com/bollywoodfeels/posts/️heart-of-gold-akshay-kumar-continues-to-give-back-in-a-meaningful-waythe-actor-/122178983210803659/)",
+      "timestamp": null,
+      "url": "https://www.facebook.com/bollywoodfeels/posts/️heart-of-gold-akshay-kumar-continues-to-give-back-in-a-meaningful-waythe-actor-/122178983210803659/",
+      "media_urls": [],
+      "engagement": {
+        "likes": null,
+        "comments": null,
+        "shares": null,
+        "views": null
+      },
+      "discovered_at": "2026-09-07T06:46:30Z"
+    }
+  ]
 }

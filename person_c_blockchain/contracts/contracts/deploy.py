@@ -8,22 +8,22 @@ from web3 import Web3
 
 load_dotenv()
 
-RPC_URL = os.getenv("POLYGON_AMOY_RPC_URL")
-PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+RPC_URL = os.getenv("LOCAL_RPC_URL")
+PRIVATE_KEY = os.getenv("LOCAL_PRIVATE_KEY")
 
 if not RPC_URL:
-    raise ValueError("POLYGON_AMOY_RPC_URL is missing from .env")
+    raise ValueError("LOCAL_RPC_URL is missing from .env")
 
 if not PRIVATE_KEY:
-    raise ValueError("PRIVATE_KEY is missing from .env")
+    raise ValueError("LOCAL_PRIVATE_KEY is missing from .env")
 
 
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
 if not w3.is_connected():
-    raise ConnectionError("Could not connect to Polygon Amoy")
+    raise ConnectionError("Could not connect to local Anvil blockchain")
 
-print("Connected to Polygon Amoy")
+print("Connected to local Anvil blockchain")
 print("Chain ID:", w3.eth.chain_id)
 
 
@@ -36,15 +36,19 @@ balance = w3.eth.get_balance(account.address)
 print(
     "Balance:",
     w3.from_wei(balance, "ether"),
-    "POL"
+    "ETH"
 )
 
 
 abi = json.loads(
-    Path("PostVerification_abi.json").read_text()
+    Path(__file__).resolve().parent.joinpath(
+        "PostVerification_abi.json"
+    ).read_text()
 )
 
 bytecode = Path(
+    __file__
+).resolve().parent.joinpath(
     "PostVerification_bytecode.txt"
 ).read_text().strip()
 
@@ -80,7 +84,7 @@ transaction = contract.constructor().build_transaction(
     {
         "from": account.address,
         "nonce": nonce,
-        "chainId": 80002,
+        "chainId":31337,
         "gas": gas_limit,
         "gasPrice": w3.eth.gas_price,
     }
@@ -113,7 +117,3 @@ print("Contract address:", receipt.contractAddress)
 print("Transaction hash:", receipt.transactionHash.hex())
 print("Block number:", receipt.blockNumber)
 
-print(
-    "Explorer:",
-    f"https://amoy.polygonscan.com/tx/{receipt.transactionHash.hex()}"
-)

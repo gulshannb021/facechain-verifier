@@ -10,11 +10,16 @@ from hash_utils import hash_post
 
 load_dotenv()
 
-RPC_URL = os.getenv("POLYGON_AMOY_RPC_URL")
+
+# ==============================
+# Local Anvil Configuration
+# ==============================
+
+RPC_URL = os.getenv("LOCAL_RPC_URL")
 CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS")
 
 if not RPC_URL:
-    raise ValueError("POLYGON_AMOY_RPC_URL is missing from .env")
+    raise ValueError("LOCAL_RPC_URL is missing from .env")
 
 if not CONTRACT_ADDRESS:
     raise ValueError("CONTRACT_ADDRESS is missing from .env")
@@ -23,15 +28,20 @@ if not CONTRACT_ADDRESS:
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
 if not w3.is_connected():
-    raise ConnectionError("Could not connect to Polygon Amoy")
+    raise ConnectionError("Could not connect to local Anvil blockchain")
 
-print("Connected to Polygon Amoy")
+print("Connected to local Anvil blockchain")
 print("Chain ID:", w3.eth.chain_id)
 
 
-# Load contract ABI
+# ==============================
+# Load Contract ABI
+# ==============================
+
 abi = json.loads(
-    Path("PostVerification_abi.json").read_text()
+    Path(__file__).resolve().parent.joinpath(
+        "PostVerification_abi.json"
+    ).read_text()
 )
 
 contract = w3.eth.contract(
@@ -40,10 +50,14 @@ contract = w3.eth.contract(
 )
 
 
+# ==============================
+# Verify Post
+# ==============================
+
 def verify_post(post):
     """
     Hash the supplied post and check whether
-    that hash exists on the blockchain.
+    that hash exists on the local blockchain.
     """
 
     post_hash = hash_post(post)
@@ -59,7 +73,7 @@ def verify_post(post):
 
     if exists:
         print("\n✅ VERIFICATION SUCCESSFUL")
-        print("The post matches a hash stored on Polygon Amoy.")
+        print("The post matches a hash stored on the local blockchain.")
         print("Timestamp:", timestamp)
         print("Submitter:", submitter)
     else:
@@ -69,14 +83,22 @@ def verify_post(post):
     return exists
 
 
+# ==============================
+# Main
+# ==============================
+
 if __name__ == "__main__":
 
-    # Temporary test post
-    post = {
-        "platform": "Instagram",
-        "post_url": "https://example.com/post/123",
-        "caption": "TAMPERED DATA",
-        "author": "test_user"
-    }
+    # Load Person B's discovered post
+    post_data = json.loads(
+        Path(__file__).resolve().parents[3].joinpath(
+            "post.json"
+        ).read_text()
+    )
+
+    if not post_data.get("canonical_data"):
+        raise ValueError("post.json does not contain canonical_data")
+
+    post = post_data["canonical_data"]
 
     verify_post(post)
